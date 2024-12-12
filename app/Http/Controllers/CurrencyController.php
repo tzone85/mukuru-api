@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Repository\CurrencyRepository;
 use App\Service\ExchangeRateService;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\JsonResponse;
 
 /**
  * Class CurrencyController
@@ -33,37 +34,69 @@ class CurrencyController extends Controller
     }
 
     /**
-     * @return \Illuminate\Support\Collection
+     * @return JsonResponse
      */
     public function index()
     {
-        return $this->repository->findAll();
+        return response()->json($this->repository->findAll());
     }
 
     /**
      * @param int $id
-     * @return \App\Model\Currency
+     * @return JsonResponse
      */
     public function show(int $id)
     {
-        return $this->repository->findOne($id);
+        $currency = $this->repository->findOne($id);
+        if (!$currency) {
+            return response()->json(['message' => 'Currency not found'], 404);
+        }
+        return response()->json($currency);
     }
 
     /**
      * @param FormRequest $request
-     * @return mixed
+     * @return JsonResponse
      */
     public function getTotalAmount(FormRequest $request)
     {
-        return $this->service->convertToDollar($request->get('currency'), $request->get('foreign_currency_amount'));
+        $currency = $request->get('currency');
+        $amount = $request->get('foreign_currency_amount');
+
+        if (!$this->repository->findByCurrency($currency)) {
+            return response()->json(['message' => 'Currency not found'], 404);
+        }
+
+        $result = $this->service->convertToDollar($currency, $amount);
+        return response()->json([
+            'foreign_currency_amount' => $amount,
+            'total_amount' => $result['amount'],
+            'exchange_rate' => $result['exchange_rate'],
+            'surcharge_rate' => $result['surcharge_rate'],
+            'currency' => $currency
+        ]);
     }
 
     /**
      * @param FormRequest $request
-     * @return mixed
+     * @return JsonResponse
      */
     public function getForeignCurrencyAmount(FormRequest $request)
     {
-        return $this->service->convertToForeign($request->get('currency'), $request->get('total_amount'));
+        $currency = $request->get('currency');
+        $amount = $request->get('total_amount');
+
+        if (!$this->repository->findByCurrency($currency)) {
+            return response()->json(['message' => 'Currency not found'], 404);
+        }
+
+        $result = $this->service->convertToForeign($currency, $amount);
+        return response()->json([
+            'foreign_currency_amount' => $result['amount'],
+            'total_amount' => $amount,
+            'exchange_rate' => $result['exchange_rate'],
+            'surcharge_rate' => $result['surcharge_rate'],
+            'currency' => $currency
+        ]);
     }
 }

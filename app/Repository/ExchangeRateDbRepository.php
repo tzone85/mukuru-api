@@ -43,9 +43,9 @@ class ExchangeRateDbRepository implements ExchangeRateInterface
         $convertedAmount = $amount * $model->exchange_rate;
 
         return [
-            'foreign_currency_amount' => $amount,
-            'total_amount' => $convertedAmount,
-            'currency' => $currency
+            'amount' => $convertedAmount,
+            'exchange_rate' => $model->exchange_rate,
+            'surcharge_rate' => $model->discount_rate ?? 0
         ];
     }
 
@@ -60,10 +60,9 @@ class ExchangeRateDbRepository implements ExchangeRateInterface
         $convertedAmount = $amount / $model->exchange_rate;
 
         return [
-            'foreign_currency_amount' => $convertedAmount,
-            'total_amount' => $amount,
-            'currency' => $currency,
-            'model' => $model
+            'amount' => $convertedAmount,
+            'exchange_rate' => $model->exchange_rate,
+            'surcharge_rate' => $model->discount_rate ?? 0
         ];
     }
 }

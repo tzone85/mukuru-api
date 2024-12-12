@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Model\Currency;
 use App\Model\Order;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
 
 class OrderRepository
 {
@@ -54,8 +55,8 @@ class OrderRepository
      */
     public function create(array $attributes)
     {
-        $currencyModel = Currency::where('currency', array_get($attributes, 'currency'))->firstOrFail();
-        $totalAmount = array_get($attributes, 'total_amount');
+        $currencyModel = Currency::where('currency', Arr::get($attributes, 'currency'))->firstOrFail();
+        $totalAmount = Arr::get($attributes, 'total_amount');
         $surchargeAmount = $totalAmount * $currencyModel->surcharge_rate;
         $totalAmount = $totalAmount-$surchargeAmount;
 
@@ -66,7 +67,7 @@ class OrderRepository
             'currency' => $currencyModel->currency,
             'exchange_rate' => $currencyModel->exchange_rate,
             'surcharge_rate' => $currencyModel->surcharge_rate,
-            'foreign_currency_amount' => array_get($attributes, 'foreign_currency_amount'),
+            'foreign_currency_amount' => Arr::get($attributes, 'foreign_currency_amount'),
             'total_amount' => $totalAmount,
             'surcharge_amount' => $surchargeAmount,
             'discount_amount' => $discountAmount,

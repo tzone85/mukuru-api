@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Repository\OrderRepository;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\JsonResponse;
 
 class OrderController extends Controller
 {
@@ -22,11 +23,20 @@ class OrderController extends Controller
     }
 
     /**
+     * @return JsonResponse
+     */
+    public function index()
+    {
+        return response()->json($this->repository->findAll());
+    }
+
+    /**
      * @param FormRequest $request
-     * @return \App\Model\Order
+     * @return JsonResponse
      */
     public function store(FormRequest $request)
     {
-        return $this->repository->create($request->all());
+        $order = $this->repository->create($request->all());
+        return response()->json($order, 200);
     }
 }

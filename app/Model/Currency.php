@@ -11,10 +11,21 @@ class Currency extends Model
         'description',
         'currency',
         'exchange_rate',
-        'surcharge_rate'
+        'surcharge_rate',
+        'discount_rate'
     ];
 
-    protected $hidden =[
-      'created_at','updated_at'
+    protected $hidden = [
+        'created_at',
+        'updated_at'
     ];
+
+    protected $appends = [
+        'discountRate'
+    ];
+
+    public function getDiscountRateAttribute()
+    {
+        return $this->discount_rate ?? 0;
+    }
 }

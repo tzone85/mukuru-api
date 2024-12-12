@@ -16,7 +16,7 @@ class CreateCurrencyTable extends Migration
         Schema::create('currencies', function (Blueprint $table) {
             $table->increments('id');
             $table->string('symbol')->index();
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->string('currency')->index();
             $table->decimal('exchange_rate',8,7);
             $table->decimal('surcharge_rate',8, 7);

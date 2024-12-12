@@ -1,122 +1,129 @@
-# mukuru-api
+# Mukuru API
+
+A Laravel-based currency exchange API that handles currency conversions and order management.
+
+## Requirements
+
+- PHP >= 8.1
+- MySQL >= 5.7
+- Composer
+- Node.js & NPM (for frontend assets)
+
+## Features
+
+- Currency listing and details
+- Currency conversion (USD to foreign currency and vice versa)
+- Order management with surcharge and discount calculations
+- RESTful API endpoints
+
+## Installation
+
+1. Clone the repository:
 ```bash
-.
-├── README.md
-├── app
-│   ├── Console
-│   │   └── Kernel.php
-│   ├── Exceptions
-│   │   └── Handler.php
-│   ├── Http
-│   │   ├── Controllers
-│   │   ├── Kernel.php
-│   │   ├── Middleware
-│   │   └── Requests
-│   ├── Model
-│   │   ├── Currency.php
-│   │   └── Order.php
-│   ├── Providers
-│   │   ├── AppServiceProvider.php
-│   │   ├── AuthServiceProvider.php
-│   │   ├── BroadcastServiceProvider.php
-│   │   ├── EventServiceProvider.php
-│   │   └── RouteServiceProvider.php
-│   ├── Repository
-│   │   ├── CurrencyRepository.php
-│   │   ├── ExchangeRateDbRepository.php
-│   │   ├── JsonRatesRepository.php
-│   │   └── OrderRepository.php
-│   ├── Service
-│   │   ├── ExchangeRateInterface.php
-│   │   └── ExchangeRateService.php
-│   └── User.php
-├── artisan
-├── bootstrap
-│   ├── app.php
-│   └── cache
-├── composer.json
-├── config
-│   ├── app.php
-│   ├── auth.php
-│   ├── broadcasting.php
-│   ├── cache.php
-│   ├── database.php
-│   ├── filesystems.php
-│   ├── mail.php
-│   ├── queue.php
-│   ├── services.php
-│   ├── session.php
-│   └── view.php
-├── database
-│   ├── factories
-│   │   └── UserFactory.php
-│   ├── migrations
-│   │   ├── 2014_10_12_000000_create_users_table.php
-│   │   ├── 2014_10_12_100000_create_password_resets_table.php
-│   │   ├── 2018_07_03_134540_create_order_table.php
-│   │   └── 2018_07_03_134548_create_currency_table.php
-│   └── seeds
-│       ├── CurrencySeeder.php
-│       └── DatabaseSeeder.php
-├── package.json
-├── phpunit.xml
-├── public
-│   ├── css
-│   │   └── app.css
-│   ├── favicon.ico
-│   ├── index.php
-│   ├── js
-│   │   └── app.js
-│   ├── robots.txt
-│   └── web.config
-├── resources
-│   ├── assets
-│   │   ├── js
-│   │   └── sass
-│   ├── lang
-│   │   └── en
-│   └── views
-│       └── welcome.blade.php
-├── routes
-│   ├── api.php
-│   ├── channels.php
-│   ├── console.php
-│   └── web.php
-├── server.php
-├── storage
-│   ├── app
-│   │   └── public
-│   ├── framework
-│   │   ├── cache
-│   │   ├── sessions
-│   │   ├── testing
-│   │   └── views
-│   └── logs
-├── tests
-│   ├── CreatesApplication.php
-│   ├── Feature
-│   │   ├── ExampleTest.php
-│   │   └── ExchangeRateTest.php
-│   ├── TestCase.php
-│   └── Unit
-│       └── ExampleTest.php
-└── webpack.mix.js
+git clone https://github.com/yourusername/mukuru-api.git
+cd mukuru-api
 ```
 
-#### Requires:
-- php > 7.0
-- MySQL 5.6
-- composer
+2. Install PHP dependencies:
+```bash
+composer install
+```
 
-### Database Migration
+3. Environment Setup:
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-- php artisan migrate --seed
+4. Configure your `.env` file with your database settings:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=mukurudb
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-### Manual Setup Instructions
+5. Create the database:
+```bash
+mysql -u root -e "CREATE DATABASE mukurudb"
+```
 
-- Run composer install
-- Copy .env.tpl and update database configurations
+6. Run migrations and seed the database:
+```bash
+php artisan migrate --seed
+```
 
-### Running the application
+## Running the Application
 
-- Run php artisan serve --port 8000
+Start the development server:
+```bash
+php artisan serve
+```
+
+The API will be available at `http://127.0.0.1:8000`
+
+## API Endpoints
+
+### Currencies
+- `GET /api/currencies` - List all currencies
+- `GET /api/currencies/{id}` - Get specific currency details
+
+### Currency Conversion
+- `POST /api/get-foreign-currency-amount` - Convert USD to foreign currency
+- `POST /api/get-total-amount` - Convert foreign currency to USD
+
+### Orders
+- `POST /api/orders` - Create a new currency exchange order
+
+## Example API Usage
+
+### Create an Order
+```bash
+curl -X POST http://127.0.0.1:8000/api/orders \
+  -H "Content-Type: application/json" \
+  -d '{
+    "currency": "ZAR",
+    "foreign_currency_amount": 1000,
+    "total_amount": 75.1574
+  }'
+```
+
+## Available Currencies
+
+- ZAR (South African Rand)
+- GBP (British Pound)
+- EUR (Euro)
+- KES (Kenyan Shilling)
+
+## Testing
+
+Run the test suite:
+```bash
+php artisan test
+```
+
+## Project Structure
+
+```bash
+.
+├── app/
+│   ├── Http/Controllers/    # API Controllers
+│   ├── Model/              # Database Models
+│   ├── Repository/         # Repository Pattern Classes
+│   └── Service/           # Business Logic Services
+├── database/
+│   ├── migrations/        # Database Migrations
+│   └── seeds/            # Database Seeders
+└── routes/
+    └── api.php           # API Routes
+```
+
+## Last Updated
+
+2024-12-12
+
+## License
+
+This project is open-sourced software licensed under the MIT license.

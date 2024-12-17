@@ -19,23 +19,27 @@ A Laravel-based currency exchange API that handles currency conversions and orde
 ## Installation
 
 1. Clone the repository:
+
 ```bash
-git clone https://github.com/yourusername/mukuru-api.git
+git clone https://github.com/tzone85/mukuru-api.git
 cd mukuru-api
 ```
 
 2. Install PHP dependencies:
+
 ```bash
 composer install
 ```
 
 3. Environment Setup:
+
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
 4. Configure your `.env` file with your database settings:
+
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -46,11 +50,13 @@ DB_PASSWORD=
 ```
 
 5. Create the database:
+
 ```bash
 mysql -u root -e "CREATE DATABASE mukurudb"
 ```
 
 6. Run migrations and seed the database:
+
 ```bash
 php artisan migrate --seed
 ```
@@ -58,6 +64,7 @@ php artisan migrate --seed
 ## Running the Application
 
 Start the development server:
+
 ```bash
 php artisan serve
 ```
@@ -67,58 +74,67 @@ The API will be available at `http://127.0.0.1:8000`
 ## API Endpoints
 
 ### Currencies
+
 - `GET /api/currencies` - List all currencies
 - `GET /api/currencies/{id}` - Get specific currency details
 
 ### Currency Endpoints
 
 #### Get Currency by ID
+
 ```http
 GET /api/currency/{id}
 ```
 
 **Parameters:**
+
 - `id` (required) - The unique identifier of the currency
 
 **Example Request:**
+
 ```bash
 curl -X GET http://127.0.0.1:8000/api/currency/1
 ```
 
 **Success Response (200 OK):**
+
 ```json
 {
-    "data": {
-        "id": 1,
-        "code": "ZAR",
-        "name": "South African Rand",
-        "symbol": "R",
-        "rate": 18.65,
-        "surcharge_percentage": 7.5,
-        "discount_percentage": 0,
-        "created_at": "2024-12-12T14:27:22.000000Z",
-        "updated_at": "2024-12-12T14:27:22.000000Z"
-    }
+  "data": {
+    "id": 1,
+    "code": "ZAR",
+    "name": "South African Rand",
+    "symbol": "R",
+    "rate": 18.65,
+    "surcharge_percentage": 7.5,
+    "discount_percentage": 0,
+    "created_at": "2024-12-12T14:27:22.000000Z",
+    "updated_at": "2024-12-12T14:27:22.000000Z"
+  }
 }
 ```
 
 **Error Response (404 Not Found):**
+
 ```json
 {
-    "error": "Currency not found"
+  "error": "Currency not found"
 }
 ```
 
 ### Currency Conversion
+
 - `POST /api/get-foreign-currency-amount` - Convert USD to foreign currency
 - `POST /api/get-total-amount` - Convert foreign currency to USD
 
 ### Orders
+
 - `POST /api/orders` - Create a new currency exchange order
 
 ## Example API Usage
 
 ### Get Currency by ID
+
 ```bash
 # Request
 curl -X GET http://127.0.0.1:8000/api/currencies/1
@@ -138,6 +154,7 @@ curl -X GET http://127.0.0.1:8000/api/currencies/1
 ```
 
 ### Create an Order
+
 ```bash
 curl -X POST http://127.0.0.1:8000/api/orders \
   -H "Content-Type: application/json" \
@@ -160,11 +177,13 @@ curl -X POST http://127.0.0.1:8000/api/orders \
 The project includes comprehensive unit and feature tests for all API endpoints. To run the tests:
 
 1. Set up the testing environment:
+
 ```bash
 cp .env.example .env.testing
 ```
 
 2. Configure your testing database in `.env.testing`:
+
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -175,16 +194,19 @@ DB_PASSWORD=
 ```
 
 3. Create the testing database:
+
 ```bash
 mysql -u root -e "CREATE DATABASE mukurudb_testing"
 ```
 
 4. Run all tests:
+
 ```bash
 php artisan test
 ```
 
 Or run specific test suites:
+
 ```bash
 # Run only currency-related tests
 php artisan test --filter=CurrencyTest
@@ -198,23 +220,27 @@ php artisan test --filter=OrderTest
 The test suite covers:
 
 #### Currency Operations
+
 - Currency listing and retrieval
 - Currency details validation
 - Non-existent currency handling
 
 #### Currency Conversion
+
 - USD to foreign currency conversion
 - Foreign currency to USD conversion
 - Exchange rate calculations
 - Surcharge and discount applications
 
 #### Input Validation
+
 - Required fields validation
 - Numeric input validation
 - Positive amount validation
 - Invalid currency handling
 
 #### Error Handling
+
 - 404 responses for non-existent resources
 - 422 responses for validation errors
 - Proper error message formatting

@@ -157,10 +157,71 @@ curl -X POST http://127.0.0.1:8000/api/orders \
 
 ## Testing
 
-Run the test suite:
+The project includes comprehensive unit and feature tests for all API endpoints. To run the tests:
+
+1. Set up the testing environment:
+```bash
+cp .env.example .env.testing
+```
+
+2. Configure your testing database in `.env.testing`:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=mukurudb_testing
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+3. Create the testing database:
+```bash
+mysql -u root -e "CREATE DATABASE mukurudb_testing"
+```
+
+4. Run all tests:
 ```bash
 php artisan test
 ```
+
+Or run specific test suites:
+```bash
+# Run only currency-related tests
+php artisan test --filter=CurrencyTest
+
+# Run only order-related tests
+php artisan test --filter=OrderTest
+```
+
+### Test Coverage
+
+The test suite covers:
+
+#### Currency Operations
+- Currency listing and retrieval
+- Currency details validation
+- Non-existent currency handling
+
+#### Currency Conversion
+- USD to foreign currency conversion
+- Foreign currency to USD conversion
+- Exchange rate calculations
+- Surcharge and discount applications
+
+#### Input Validation
+- Required fields validation
+- Numeric input validation
+- Positive amount validation
+- Invalid currency handling
+
+#### Error Handling
+- 404 responses for non-existent resources
+- 422 responses for validation errors
+- Proper error message formatting
+
+### Continuous Integration
+
+The test suite is automatically run on every push to the repository using GitHub Actions.
 
 ## Project Structure
 

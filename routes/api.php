@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\OrderController;
 use App\Http\Requests\CreateOrderRequest;
@@ -25,6 +26,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 // Currency routes
 Route::get('/currencies', [CurrencyController::class, 'index']);
 Route::get('/currencies/{id}', [CurrencyController::class, 'show']);
+// Route::get('/currency/{id}', [CurrencyController::class, 'getCurrencyById']);
 Route::post('/get-foreign-currency-amount', [CurrencyController::class, 'getForeignCurrencyAmount'])
     ->middleware('validate.request:' . GetForeignCurrencyAmountRequest::class);
 Route::post('/get-total-amount', [CurrencyController::class, 'getTotalAmount'])

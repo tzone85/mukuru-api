@@ -42,15 +42,19 @@ class CurrencyController extends Controller
     }
 
     /**
+     * Get a specific currency by ID
+     *
      * @param int $id
      * @return JsonResponse
      */
-    public function show(int $id)
+    public function show($id): JsonResponse
     {
-        $currency = $this->repository->findOne($id);
+        $currency = $this->repository->find($id);
+        
         if (!$currency) {
-            return response()->json(['message' => 'Currency not found'], 404);
+            return response()->json(['error' => 'Currency not found'], 404);
         }
+
         return response()->json($currency);
     }
 

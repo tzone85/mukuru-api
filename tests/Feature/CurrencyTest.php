@@ -44,9 +44,7 @@ class CurrencyTest extends TestCase
                     'symbol',
                     'exchange_rate',
                     'surcharge_rate',
-                    'discountRate',
-                    'created_at',
-                    'updated_at'
+                    'discountRate'
                 ]
             ])
             ->assertJsonCount(2);
@@ -78,14 +76,16 @@ class CurrencyTest extends TestCase
     {
         $response = $this->postJson('/api/get-foreign-currency-amount', [
             'currency' => 'ZAR',
-            'amount' => 100
+            'total_amount' => 100
         ]);
 
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'foreign_currency_amount',
+                'total_amount',
                 'exchange_rate',
-                'surcharge_rate'
+                'surcharge_rate',
+                'currency'
             ]);
     }
 
@@ -108,9 +108,70 @@ class CurrencyTest extends TestCase
     {
         $response = $this->postJson('/api/get-foreign-currency-amount', [
             'currency' => 'INVALID',
-            'amount' => 100
+            'total_amount' => 100
         ]);
 
-        $response->assertStatus(404);
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['currency']);
+    }
+
+    public function test_get_total_amount_validates_required_fields()
+    {
+        $response = $this->postJson('/api/get-total-amount', []);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['currency', 'foreign_currency_amount']);
+    }
+
+    public function test_get_foreign_currency_amount_validates_required_fields()
+    {
+        $response = $this->postJson('/api/get-foreign-currency-amount', []);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['currency', 'total_amount']);
+    }
+
+    public function test_get_total_amount_validates_numeric_amount()
+    {
+        $response = $this->postJson('/api/get-total-amount', [
+            'currency' => 'ZAR',
+            'foreign_currency_amount' => 'not-a-number'
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['foreign_currency_amount']);
+    }
+
+    public function test_get_foreign_currency_amount_validates_numeric_amount()
+    {
+        $response = $this->postJson('/api/get-foreign-currency-amount', [
+            'currency' => 'ZAR',
+            'total_amount' => 'not-a-number'
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['total_amount']);
+    }
+
+    public function test_get_total_amount_validates_positive_amount()
+    {
+        $response = $this->postJson('/api/get-total-amount', [
+            'currency' => 'ZAR',
+            'foreign_currency_amount' => -100
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['foreign_currency_amount']);
+    }
+
+    public function test_get_foreign_currency_amount_validates_positive_amount()
+    {
+        $response = $this->postJson('/api/get-foreign-currency-amount', [
+            'currency' => 'ZAR',
+            'total_amount' => -100
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['total_amount']);
     }
 }

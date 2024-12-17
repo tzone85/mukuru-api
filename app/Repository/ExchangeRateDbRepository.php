@@ -30,6 +30,7 @@ class ExchangeRateDbRepository implements ExchangeRateInterface
     public function convert(int $amount, string $currency): Currency
     {
         // TODO: Implement convert() method.
+        return $this->repository->findByCurrency($currency);
     }
 
     /**

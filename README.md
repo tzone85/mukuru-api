@@ -70,6 +70,45 @@ The API will be available at `http://127.0.0.1:8000`
 - `GET /api/currencies` - List all currencies
 - `GET /api/currencies/{id}` - Get specific currency details
 
+### Currency Endpoints
+
+#### Get Currency by ID
+```http
+GET /api/currency/{id}
+```
+
+**Parameters:**
+- `id` (required) - The unique identifier of the currency
+
+**Example Request:**
+```bash
+curl -X GET http://127.0.0.1:8000/api/currency/1
+```
+
+**Success Response (200 OK):**
+```json
+{
+    "data": {
+        "id": 1,
+        "code": "ZAR",
+        "name": "South African Rand",
+        "symbol": "R",
+        "rate": 18.65,
+        "surcharge_percentage": 7.5,
+        "discount_percentage": 0,
+        "created_at": "2024-12-12T14:27:22.000000Z",
+        "updated_at": "2024-12-12T14:27:22.000000Z"
+    }
+}
+```
+
+**Error Response (404 Not Found):**
+```json
+{
+    "error": "Currency not found"
+}
+```
+
 ### Currency Conversion
 - `POST /api/get-foreign-currency-amount` - Convert USD to foreign currency
 - `POST /api/get-total-amount` - Convert foreign currency to USD
@@ -78,6 +117,25 @@ The API will be available at `http://127.0.0.1:8000`
 - `POST /api/orders` - Create a new currency exchange order
 
 ## Example API Usage
+
+### Get Currency by ID
+```bash
+# Request
+curl -X GET http://127.0.0.1:8000/api/currencies/1
+
+# Response
+{
+    "id": 1,
+    "code": "ZAR",
+    "name": "South African Rand",
+    "symbol": "R",
+    "rate": 18.65,
+    "surcharge_percentage": 7.5,
+    "discount_percentage": 0,
+    "created_at": "2024-12-12T14:20:53.000000Z",
+    "updated_at": "2024-12-12T14:20:53.000000Z"
+}
+```
 
 ### Create an Order
 ```bash

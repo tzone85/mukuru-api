@@ -29,6 +29,17 @@ class CurrencyRepository
         return $this->model->get();
     }
 
+    /**
+     * Find a currency by its ID
+     *
+     * @param int $id
+     * @return Currency|null
+     */
+    public function find(int $id): ?Currency
+    {
+        return $this->model->find($id);
+    }
+
     public function findOne(int $id): Currency
     {
         return $this->model->findOrFail($id);

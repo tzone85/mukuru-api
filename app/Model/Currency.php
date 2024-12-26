@@ -3,8 +3,10 @@
 namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class Currency extends Model
+// class Currency extends Model
+class Currency extends JsonResource
 {
     protected $fillable = [
         'symbol',

@@ -167,6 +167,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Dedoc\Scramble\ScrambleServiceProvider::class,
 
         /*
          * Application Service Providers...

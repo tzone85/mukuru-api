@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,3 +16,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+// API Documentation Routes
+Route::get('docs/api', fn () => view('scramble::docs'))->name('scramble.docs.index');
+Route::get('docs/api.json', fn () => app(\Dedoc\Scramble\Support\Generator\OpenApi::class)->generate())->name('scramble.docs.json');

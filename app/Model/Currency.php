@@ -3,10 +3,8 @@
 namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Resources\Json\JsonResource;
 
-// class Currency extends Model
-class Currency extends JsonResource
+class Currency extends Model
 {
     protected $fillable = [
         'symbol',
@@ -22,12 +20,9 @@ class Currency extends JsonResource
         'updated_at'
     ];
 
-    protected $appends = [
-        'discountRate'
+    protected $casts = [
+        'exchange_rate' => 'float',
+        'surcharge_rate' => 'float',
+        'discount_rate' => 'float'
     ];
-
-    public function getDiscountRateAttribute()
-    {
-        return $this->discount_rate ?? 0;
-    }
 }

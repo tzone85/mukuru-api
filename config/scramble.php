@@ -7,7 +7,7 @@ return [
      * Your API path. By default, all routes starting with this path will be added to the docs.
      * If you need to change this behavior, you can add your custom routes resolver using `Scramble::routes()`.
      */
-    'api_path' => 'api',
+    'api_path' => 'api/v1',
 
     /*
      * Your API domain. By default, app domain is used. This is also a part of the default API routes
@@ -25,12 +25,24 @@ return [
         /*
          * API version.
          */
-        'version' => env('API_VERSION', '0.0.1'),
+        'version' => env('API_VERSION', '1.0.0'),
 
         /*
          * Description rendered on the home page of the API documentation (`/docs/api`).
          */
-        'description' => '',
+        'description' => 'Currency Exchange API Documentation',
+
+        'title' => 'Currency Exchange API',
+
+        'contact' => [
+            'name' => 'API Support',
+            'email' => 'support@example.com',
+        ],
+
+        'license' => [
+            'name' => 'MIT',
+            'url' => 'https://opensource.org/licenses/MIT',
+        ],
     ],
 
     /*
@@ -54,25 +66,52 @@ return [
     ],
 
     /*
-     * The list of servers of the API. By default, when `null`, server URL will be created from
-     * `scramble.api_path` and `scramble.api_domain` config variables. When providing an array, you
-     * will need to specify the local server URL manually (if needed).
-     *
-     * Example of non-default config (final URLs are generated using Laravel `url` helper):
-     *
-     * ```php
-     * 'servers' => [
-     *     'Live' => 'api',
-     *     'Prod' => 'https://scramble.dedoc.co/api',
-     * ],
-     * ```
+     * The list of servers of the API. By default, when empty, server URL will be created from
+     * the current URL when rendering the documentation.
      */
-    'servers' => null,
-
-    'middleware' => [
-        'web',
-        RestrictedDocsAccess::class,
+    'servers' => [
+        [
+            'url' => env('APP_URL'),
+            'description' => 'Local Environment',
+        ],
     ],
 
-    'extensions' => [],
+    /*
+     * Map your authentication to OpenAPI authentication definitions.
+     */
+    'auth' => [
+        /*
+         * Define OpenAPI security scheme type, etc.
+         */
+        'bearer_token' => [
+            'type' => 'http',
+            'scheme' => 'bearer',
+            'bearerFormat' => 'JWT',
+        ],
+    ],
+
+    /*
+     * The list of paths to exclude from the documentation.
+     */
+    'exclude_paths' => [
+        '/docs/api',
+        '/docs/api.json',
+    ],
+
+    /*
+     * Directory for storing generated OpenAPI documentation.
+     */
+    'storage' => storage_path('api-docs'),
+
+    /*
+     * List of middleware to be applied to the docs endpoint.
+     */
+    'middleware' => [
+        'web',
+    ],
+
+    /*
+     * Should the package automatically build the documentation when accessed.
+     */
+    'auto_build' => env('APP_ENV') !== 'production',
 ];

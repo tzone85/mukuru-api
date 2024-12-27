@@ -101,96 +101,134 @@ You can also find the following files:
 
 ## API Endpoints
 
+All API endpoints are versioned and prefixed with `/api/v1`.
+
 ### Currencies
 
-- `GET /api/currencies` - List all currencies
-- `GET /api/currencies/{id}` - Get specific currency details
-
-### Currency Endpoints
-
-#### Get Currency by ID
-
-```http
-GET /api/currency/{id}
-```
-
-**Parameters:**
-
-- `id` (required) - The unique identifier of the currency
-
-**Example Request:**
-
-```bash
-curl -X GET http://127.0.0.1:8000/api/currency/1
-```
-
-**Success Response (200 OK):**
-
-```json
-{
-  "data": {
-    "id": 1,
-    "code": "ZAR",
-    "name": "South African Rand",
-    "symbol": "R",
-    "rate": 18.65,
-    "surcharge_percentage": 7.5,
-    "discount_percentage": 0,
-    "created_at": "2024-12-12T14:27:22.000000Z",
-    "updated_at": "2024-12-12T14:27:22.000000Z"
-  }
-}
-```
-
-**Error Response (404 Not Found):**
-
-```json
-{
-  "error": "Currency not found"
-}
-```
-
-### Currency Conversion
-
-- `POST /api/get-foreign-currency-amount` - Convert USD to foreign currency
-- `POST /api/get-total-amount` - Convert foreign currency to USD
+- `GET /api/v1/currencies` - List all currencies
+- `GET /api/v1/currencies/{id}` - Get specific currency details
+- `POST /api/v1/currencies/get-foreign-currency-amount` - Convert USD to foreign currency
+- `POST /api/v1/currencies/get-total-amount` - Convert foreign currency to USD
 
 ### Orders
 
-- `POST /api/orders` - Create a new currency exchange order
+- `GET /api/v1/orders` - List all orders
+- `POST /api/v1/orders` - Create a new currency exchange order
 
 ## Example API Usage
+
+### List All Currencies
+
+```bash
+# Request
+curl -X GET http://127.0.0.1:8000/api/v1/currencies
+
+# Response
+{
+    "data": [
+        {
+            "id": 1,
+            "code": "ZAR",
+            "name": "South African Rand",
+            "symbol": "R",
+            "rate": 18.65,
+            "surcharge_percentage": 7.5,
+            "discount_percentage": 0,
+            "created_at": "2024-12-12T14:20:53.000000Z",
+            "updated_at": "2024-12-12T14:20:53.000000Z"
+        }
+        // ... other currencies
+    ]
+}
+```
 
 ### Get Currency by ID
 
 ```bash
 # Request
-curl -X GET http://127.0.0.1:8000/api/currencies/1
+curl -X GET http://127.0.0.1:8000/api/v1/currencies/1
 
 # Response
 {
-    "id": 1,
-    "code": "ZAR",
-    "name": "South African Rand",
-    "symbol": "R",
-    "rate": 18.65,
-    "surcharge_percentage": 7.5,
-    "discount_percentage": 0,
-    "created_at": "2024-12-12T14:20:53.000000Z",
-    "updated_at": "2024-12-12T14:20:53.000000Z"
+    "data": {
+        "id": 1,
+        "code": "ZAR",
+        "name": "South African Rand",
+        "symbol": "R",
+        "rate": 18.65,
+        "surcharge_percentage": 7.5,
+        "discount_percentage": 0,
+        "created_at": "2024-12-12T14:20:53.000000Z",
+        "updated_at": "2024-12-12T14:20:53.000000Z"
+    }
+}
+```
+
+### Convert to Foreign Currency
+
+```bash
+# Request
+curl -X POST http://127.0.0.1:8000/api/v1/currencies/get-foreign-currency-amount \
+  -H "Content-Type: application/json" \
+  -d '{
+    "currency": "ZAR",
+    "amount": 100
+  }'
+
+# Response
+{
+    "data": {
+        "amount": 1865.00,
+        "exchange_rate": 18.65,
+        "surcharge_rate": 7.5
+    }
+}
+```
+
+### Convert to USD (Total Amount)
+
+```bash
+# Request
+curl -X POST http://127.0.0.1:8000/api/v1/currencies/get-total-amount \
+  -H "Content-Type: application/json" \
+  -d '{
+    "currency": "ZAR",
+    "amount": 1000
+  }'
+
+# Response
+{
+    "data": {
+        "amount": 53.62,
+        "exchange_rate": 18.65,
+        "surcharge_rate": 7.5
+    }
 }
 ```
 
 ### Create an Order
 
 ```bash
-curl -X POST http://127.0.0.1:8000/api/orders \
+# Request
+curl -X POST http://127.0.0.1:8000/api/v1/orders \
   -H "Content-Type: application/json" \
   -d '{
     "currency": "ZAR",
     "foreign_currency_amount": 1000,
-    "total_amount": 75.1574
+    "total_amount": 53.62
   }'
+
+# Response
+{
+    "data": {
+        "id": 1,
+        "currency": "ZAR",
+        "foreign_currency_amount": 1000,
+        "total_amount": 53.62,
+        "created_at": "2024-12-12T14:30:00.000000Z",
+        "updated_at": "2024-12-12T14:30:00.000000Z"
+    }
+}
 ```
 
 ## Available Currencies

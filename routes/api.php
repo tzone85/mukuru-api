@@ -25,15 +25,25 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::prefix('v1')->group(function () {
     // Currency routes
-    Route::get('/currencies', [CurrencyController::class, 'index']);
-    Route::get('/currencies/{id}', [CurrencyController::class, 'show']);
+    Route::get('/currencies', [CurrencyController::class, 'index'])
+        ->name('api.currencies.index');
+        
+    Route::get('/currencies/{id}', [CurrencyController::class, 'show'])
+        ->name('api.currencies.show');
+        
     Route::post('/currencies/get-foreign-currency-amount', [CurrencyController::class, 'getForeignCurrencyAmount'])
-        ->middleware('validate.request:' . GetForeignCurrencyAmountRequest::class);
+        ->middleware('validate.request:' . GetForeignCurrencyAmountRequest::class)
+        ->name('api.currencies.get-foreign-amount');
+        
     Route::post('/currencies/get-total-amount', [CurrencyController::class, 'getTotalAmount'])
-        ->middleware('validate.request:' . GetTotalAmountRequest::class);
+        ->middleware('validate.request:' . GetTotalAmountRequest::class)
+        ->name('api.currencies.get-total-amount');
 
     // Order routes
-    Route::get('/orders', [OrderController::class, 'index']);
+    Route::get('/orders', [OrderController::class, 'index'])
+        ->name('api.orders.index');
+        
     Route::post('/orders', [OrderController::class, 'store'])
-        ->middleware('validate.request:' . CreateOrderRequest::class);
+        ->middleware('validate.request:' . CreateOrderRequest::class)
+        ->name('api.orders.store');
 });

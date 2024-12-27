@@ -71,6 +71,34 @@ php artisan serve
 
 The API will be available at `http://127.0.0.1:8000`
 
+## API Documentation
+
+The API documentation is available through Scribe, which provides detailed information about all endpoints, request/response formats, and example usage.
+
+### Accessing the Documentation
+
+1. Generate the documentation (if not already generated):
+```bash
+php artisan scribe:generate
+```
+
+2. Visit the documentation at:
+```
+http://localhost:8000/docs
+```
+
+The documentation includes:
+- Detailed API endpoint descriptions
+- Request/response examples
+- Interactive API testing interface
+- Authentication details
+- OpenAPI/Swagger specification
+- Postman collection
+
+You can also find the following files:
+- OpenAPI specification: `public/docs/openapi.yaml`
+- Postman collection: `public/docs/collection.json`
+
 ## API Endpoints
 
 ### Currencies

@@ -23,8 +23,6 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
-
         parent::boot();
     }
 
@@ -69,5 +67,16 @@ class RouteServiceProvider extends ServiceProvider
              ->middleware('api')
              ->namespace($this->namespace)
              ->group(base_path('routes/api.php'));
+    }
+
+    /**
+     * Define the documentation routes for the application.
+     *
+     * @return void
+     */
+    protected function mapDocRoutes()
+    {
+        Route::middleware('web')
+             ->group(base_path('routes/docs.php'));
     }
 }

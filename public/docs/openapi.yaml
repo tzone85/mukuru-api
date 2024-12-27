@@ -1,0 +1,346 @@
+openapi: 3.0.3
+info:
+  title: Laravel
+  description: ''
+  version: 1.0.0
+servers:
+  -
+    url: 'http://localhost:8000'
+paths:
+  /api/v1/currencies:
+    get:
+      summary: 'List all currencies'
+      operationId: listAllCurrencies
+      description: 'Returns a list of all available currencies in the system.'
+      parameters: []
+      responses:
+        200:
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "{\n  \"data\": [...]\n}"
+      tags:
+        - 'Currency Management'
+      security: []
+  '/api/v1/currencies/{id}':
+    get:
+      summary: 'Get Currency Details'
+      operationId: getCurrencyDetails
+      description: 'Retrieve detailed information about a specific currency.'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    id: 1
+                    code: USD
+                    name: 'US Dollar'
+                    symbol: $
+                    exchange_rate: 1.0
+                    surcharge_rate: 0.05
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      code:
+                        type: string
+                        example: USD
+                      name:
+                        type: string
+                        example: 'US Dollar'
+                      symbol:
+                        type: string
+                        example: $
+                      exchange_rate:
+                        type: number
+                        example: 1.0
+                      surcharge_rate:
+                        type: number
+                        example: 0.05
+        404:
+          description: 'Currency not found'
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error: 'Currency not found'
+                properties:
+                  error:
+                    type: string
+                    example: 'Currency not found'
+      tags:
+        - 'Currency Management'
+      security: []
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the currency.'
+        example: 1
+        required: true
+        schema:
+          type: integer
+  /api/v1/currencies/get-foreign-currency-amount:
+    post:
+      summary: 'Get Foreign Currency Amount'
+      operationId: getForeignCurrencyAmount
+      description: 'Convert a USD amount to a foreign currency using current exchange rates.'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    foreign_currency_amount: '85.42'
+                    total_amount: '100.50'
+                    exchange_rate: '0.85'
+                    surcharge_rate: '0.05'
+                    currency: EUR
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      foreign_currency_amount:
+                        type: string
+                        example: '85.42'
+                      total_amount:
+                        type: string
+                        example: '100.50'
+                      exchange_rate:
+                        type: string
+                        example: '0.85'
+                      surcharge_rate:
+                        type: string
+                        example: '0.05'
+                      currency:
+                        type: string
+                        example: EUR
+        404:
+          description: 'Currency not found'
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error: 'Currency not found'
+                properties:
+                  error:
+                    type: string
+                    example: 'Currency not found'
+        422:
+          description: 'Validation Error'
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'The given data was invalid.'
+                  errors:
+                    currency:
+                      - 'The currency field is required.'
+                    total_amount:
+                      - 'The total amount field is required.'
+                properties:
+                  message:
+                    type: string
+                    example: 'The given data was invalid.'
+                  errors:
+                    type: object
+                    properties:
+                      currency:
+                        type: array
+                        example:
+                          - 'The currency field is required.'
+                        items:
+                          type: string
+                      total_amount:
+                        type: array
+                        example:
+                          - 'The total amount field is required.'
+                        items:
+                          type: string
+      tags:
+        - 'Currency Management'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                total_amount:
+                  type: numeric
+                  description: 'The USD amount to convert.'
+                  example: '100.50'
+                currency:
+                  type: string
+                  description: 'The target currency code.'
+                  example: EUR
+              required:
+                - total_amount
+                - currency
+      security: []
+  /api/v1/currencies/get-total-amount:
+    post:
+      summary: 'Calculate Total Amount'
+      operationId: calculateTotalAmount
+      description: 'Calculate the total amount in USD based on the provided foreign currency amount.'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    foreign_currency_amount: '100.50'
+                    total_amount: '85.42'
+                    exchange_rate: '0.85'
+                    surcharge_rate: '0.05'
+                    currency: EUR
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      foreign_currency_amount:
+                        type: string
+                        example: '100.50'
+                      total_amount:
+                        type: string
+                        example: '85.42'
+                      exchange_rate:
+                        type: string
+                        example: '0.85'
+                      surcharge_rate:
+                        type: string
+                        example: '0.05'
+                      currency:
+                        type: string
+                        example: EUR
+        404:
+          description: 'Currency not found'
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error: 'Currency not found'
+                properties:
+                  error:
+                    type: string
+                    example: 'Currency not found'
+        422:
+          description: 'Validation Error'
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'The given data was invalid.'
+                  errors:
+                    currency:
+                      - 'The currency field is required.'
+                    foreign_currency_amount:
+                      - 'The foreign currency amount field is required.'
+                properties:
+                  message:
+                    type: string
+                    example: 'The given data was invalid.'
+                  errors:
+                    type: object
+                    properties:
+                      currency:
+                        type: array
+                        example:
+                          - 'The currency field is required.'
+                        items:
+                          type: string
+                      foreign_currency_amount:
+                        type: array
+                        example:
+                          - 'The foreign currency amount field is required.'
+                        items:
+                          type: string
+      tags:
+        - 'Currency Management'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                foreign_currency_amount:
+                  type: numeric
+                  description: 'The amount to convert.'
+                  example: '100.50'
+                currency:
+                  type: string
+                  description: 'The currency code.'
+                  example: EUR
+              required:
+                - foreign_currency_amount
+                - currency
+      security: []
+  /api/user:
+    get:
+      summary: ''
+      operationId: getApiUser
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  /api/v1/orders:
+    get:
+      summary: ''
+      operationId: getApiV1Orders
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                example: []
+      tags:
+        - Endpoints
+      security: []
+    post:
+      summary: ''
+      operationId: postApiV1Orders
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+tags:
+  -
+    name: 'Currency Management'
+    description: "\nAPIs for managing currencies and exchange rates"
+  -
+    name: Endpoints
+    description: ''

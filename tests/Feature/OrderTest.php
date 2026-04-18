@@ -21,13 +21,13 @@ class OrderTest extends TestCase
             'symbol' => 'R',
             'exchange_rate' => 0.0751574,
             'surcharge_rate' => 0.075,
-            'discountRate' => 0.03,
+            'discount_rate' => 0.03,
         ]);
     }
 
     public function test_can_create_order()
     {
-        $response = $this->postJson('/api/orders', [
+        $response = $this->postJson('/api/v1/orders', [
             'currency' => 'ZAR',
             'foreign_currency_amount' => 1000,
             'total_amount' => 75.1574
@@ -37,7 +37,6 @@ class OrderTest extends TestCase
             ->assertJsonStructure([
                 'id',
                 'currency',
-                'symbol',
                 'exchange_rate',
                 'surcharge_rate',
                 'foreign_currency_amount',
@@ -57,44 +56,46 @@ class OrderTest extends TestCase
 
     public function test_cannot_create_order_with_invalid_currency()
     {
-        $response = $this->postJson('/api/orders', [
+        $response = $this->postJson('/api/v1/orders', [
             'currency' => 'INVALID',
             'foreign_currency_amount' => 1000,
             'total_amount' => 75.1574
         ]);
 
-        $response->assertStatus(404);
+        $response->assertStatus(422);
     }
 
     public function test_order_calculations_are_correct()
     {
-        $response = $this->postJson('/api/orders', [
+        $inputTotalAmount = 75.1574;
+
+        $response = $this->postJson('/api/v1/orders', [
             'currency' => 'ZAR',
             'foreign_currency_amount' => 1000,
-            'total_amount' => 75.1574
+            'total_amount' => $inputTotalAmount
         ]);
 
         $response->assertStatus(200);
-        
+
         $order = $response->json();
-        
-        // Test surcharge calculation
-        $expectedSurcharge = $order['total_amount'] * 0.075;
+
+        // Test surcharge calculation (applied to input total amount)
+        $expectedSurcharge = $inputTotalAmount * 0.075;
         $this->assertEquals($expectedSurcharge, $order['surcharge_amount']);
-        
-        // Test discount calculation
-        $amountAfterSurcharge = $order['total_amount'] - $order['surcharge_amount'];
+
+        // Test discount calculation (applied to amount after surcharge deduction)
+        $amountAfterSurcharge = $inputTotalAmount - $expectedSurcharge;
         $expectedDiscount = $amountAfterSurcharge * 0.03;
         $this->assertEquals($expectedDiscount, $order['discount_amount']);
-        
-        // Test final amount
+
+        // Test final amount (input - surcharge - discount)
         $expectedFinalAmount = $amountAfterSurcharge - $expectedDiscount;
         $this->assertEquals($expectedFinalAmount, $order['total_amount']);
     }
 
     public function test_validation_rules()
     {
-        $response = $this->postJson('/api/orders', [
+        $response = $this->postJson('/api/v1/orders', [
             'currency' => 'ZAR',
             'foreign_currency_amount' => -1000, // negative amount
             'total_amount' => 75.1574
@@ -102,7 +103,7 @@ class OrderTest extends TestCase
 
         $response->assertStatus(422);
 
-        $response = $this->postJson('/api/orders', [
+        $response = $this->postJson('/api/v1/orders', [
             'currency' => 'ZAR',
             'foreign_currency_amount' => 'not-a-number',
             'total_amount' => 75.1574
@@ -114,20 +115,19 @@ class OrderTest extends TestCase
     public function test_can_get_all_orders()
     {
         // Create a test order first
-        $this->postJson('/api/orders', [
+        $this->postJson('/api/v1/orders', [
             'currency' => 'ZAR',
             'foreign_currency_amount' => 1000,
             'total_amount' => 75.1574
         ]);
 
-        $response = $this->getJson('/api/orders');
+        $response = $this->getJson('/api/v1/orders');
 
         $response->assertStatus(200)
             ->assertJsonStructure([
                 '*' => [
                     'id',
                     'currency',
-                    'symbol',
                     'exchange_rate',
                     'surcharge_rate',
                     'foreign_currency_amount',

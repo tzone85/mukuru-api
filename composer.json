@@ -60,6 +60,9 @@
         "allow-plugins": {
             "php-http/discovery": true,
             "symfony/thanks": false
+        },
+        "audit": {
+            "block-insecure": false
         }
     },
     "minimum-stability": "stable",

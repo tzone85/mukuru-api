@@ -40,4 +40,6 @@ class CurrencyApiGetTest extends TestCase
         // Seed currencies using the CurrencySeeder
         $this->seed(CurrencySeeder::class);
     }
+
+    // Note: Test methods to be implemented as needed for specific API endpoints
 }

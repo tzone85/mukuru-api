@@ -60,7 +60,7 @@ class OrderRepository
         $surchargeAmount = $totalAmount * $currencyModel->surcharge_rate;
         $totalAmount = $totalAmount-$surchargeAmount;
 
-        $discountAmount = $currencyModel->discountRate * $totalAmount;
+        $discountAmount = $currencyModel->discount_rate * $totalAmount;
         $totalAmount = $totalAmount - $discountAmount;
 
         return $this->model->create([
@@ -71,7 +71,7 @@ class OrderRepository
             'total_amount' => $totalAmount,
             'surcharge_amount' => $surchargeAmount,
             'discount_amount' => $discountAmount,
-            'discount_rate' => $currencyModel->discountRate
+            'discount_rate' => $currencyModel->discount_rate
         ]);
     }
 }

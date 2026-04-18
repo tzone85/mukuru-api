@@ -20,9 +20,11 @@ class CurrencyResource extends JsonResource
             'code' => $this->currency,
             'name' => $this->description,
             'symbol' => $this->symbol,
-            'exchange_rate' => (float) $this->exchange_rate,
-            'surcharge_rate' => (float) $this->surcharge_rate,
-            'discount_rate' => (float) $this->discount_rate,
+            'rate' => (float) $this->exchange_rate,
+            'surcharge_percentage' => (float) $this->surcharge_rate * 100,
+            'discount_percentage' => (float) $this->discount_rate * 100,
+            'created_at' => $this->created_at?->toISOString(),
+            'updated_at' => $this->updated_at?->toISOString(),
         ];
     }
 }

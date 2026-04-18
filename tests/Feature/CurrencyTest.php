@@ -44,9 +44,9 @@ class CurrencyTest extends TestCase
                         'code',
                         'name',
                         'symbol',
-                        'exchange_rate',
-                        'surcharge_rate',
-                        'discount_rate'
+                        'rate',
+                        'surcharge_percentage',
+                        'discount_percentage'
                     ]
                 ]
             ])
@@ -66,8 +66,8 @@ class CurrencyTest extends TestCase
                 'data' => [
                     'code' => 'ZAR',
                     'symbol' => 'R',
-                    'exchange_rate' => 0.0751574,
-                    'surcharge_rate' => 0.075
+                    'rate' => 0.0751574,
+                    'surcharge_percentage' => 7.5
                 ]
             ]);
     }

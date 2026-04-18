@@ -11,12 +11,13 @@ use Database\Seeders\CurrencySeeder;
  *
  * Test suite for currency API GET operations.
  * Focuses on testing currency retrieval endpoints including:
- * - Listing all currencies
- * - Getting individual currency details
- * - Validating response structures
- * - Error handling for non-existent resources
+ * - Listing all currencies (GET /api/v1/currencies)
+ * - Getting individual currency details (GET /api/v1/currencies/{id})
+ * - Validating response structures and data integrity
+ * - Error handling for non-existent resources (404 responses)
  *
  * Uses RefreshDatabase trait and CurrencySeeder for consistent test data.
+ * Each test method will have isolated database state with fresh seed data.
  *
  * @package Tests\Feature
  */

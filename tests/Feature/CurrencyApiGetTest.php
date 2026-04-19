@@ -41,8 +41,80 @@ class CurrencyApiGetTest extends TestCase
         $this->seed(CurrencySeeder::class);
     }
 
-    /**
-     * Note: Test methods will be implemented as needed for specific API endpoints
-     * including GET /api/v1/currencies and GET /api/v1/currencies/{id}
-     */
+    public function test_can_list_all_currencies()
+    {
+        $response = $this->getJson('/api/v1/currencies');
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => [
+                        'id',
+                        'code',
+                        'name',
+                        'symbol',
+                        'rate',
+                        'surcharge_percentage',
+                        'discount_percentage',
+                        'created_at',
+                        'updated_at'
+                    ]
+                ]
+            ]);
+
+        // Verify response contains expected number of currencies from seeder
+        $responseData = $response->json('data');
+        $this->assertCount(3, $responseData, 'Response should contain 3 currencies from seeder');
+
+        // Validate all required currency fields are present and have correct data types
+        foreach ($responseData as $currency) {
+            // Check required fields exist
+            $this->assertArrayHasKey('id', $currency);
+            $this->assertArrayHasKey('code', $currency);
+            $this->assertArrayHasKey('name', $currency);
+            $this->assertArrayHasKey('symbol', $currency);
+            $this->assertArrayHasKey('rate', $currency);
+            $this->assertArrayHasKey('surcharge_percentage', $currency);
+            $this->assertArrayHasKey('discount_percentage', $currency);
+            $this->assertArrayHasKey('created_at', $currency);
+            $this->assertArrayHasKey('updated_at', $currency);
+
+            // Validate data types
+            $this->assertIsInt($currency['id']);
+            $this->assertIsString($currency['code']);
+            $this->assertIsString($currency['name']);
+            $this->assertIsString($currency['symbol']);
+            $this->assertIsNumeric($currency['rate']);
+            $this->assertIsNumeric($currency['surcharge_percentage']);
+            $this->assertIsNumeric($currency['discount_percentage']);
+            $this->assertIsString($currency['created_at']);
+            $this->assertIsString($currency['updated_at']);
+
+            // Validate timestamp format (ISO 8601)
+            $this->assertMatchesRegularExpression(
+                '/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}Z/',
+                $currency['created_at'],
+                'created_at should be in ISO 8601 format'
+            );
+            $this->assertMatchesRegularExpression(
+                '/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}Z/',
+                $currency['updated_at'],
+                'updated_at should be in ISO 8601 format'
+            );
+
+            // Validate values are not empty
+            $this->assertNotEmpty($currency['code']);
+            $this->assertNotEmpty($currency['name']);
+            $this->assertNotEmpty($currency['symbol']);
+            $this->assertGreaterThanOrEqual(0, $currency['rate']);
+            $this->assertGreaterThanOrEqual(0, $currency['surcharge_percentage']);
+            $this->assertGreaterThanOrEqual(0, $currency['discount_percentage']);
+        }
+
+        // Check that specific seeded currencies are present
+        $currencyCodes = collect($responseData)->pluck('code')->toArray();
+        $this->assertContains('USD', $currencyCodes);
+        $this->assertContains('EUR', $currencyCodes);
+        $this->assertContains('GBP', $currencyCodes);
+    }
 }

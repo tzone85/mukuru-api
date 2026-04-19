@@ -191,4 +191,95 @@ class CurrencyApiGetTest extends TestCase
         $this->assertEquals(0.05, $responseData['surcharge_rate']);
         $this->assertEquals(0.0, $responseData['discount_rate']);
     }
+
+    public function test_returns_404_for_invalid_id()
+    {
+        $response = $this->getJson('/api/v1/currencies/invalid');
+
+        $response->assertStatus(404)
+            ->assertJsonStructure([
+                'error'
+            ])
+            ->assertJson([
+                'error' => 'Currency not found'
+            ]);
+    }
+
+    public function test_returns_404_for_non_existent_id()
+    {
+        $response = $this->getJson('/api/v1/currencies/999999');
+
+        $response->assertStatus(404)
+            ->assertJsonStructure([
+                'error'
+            ])
+            ->assertJson([
+                'error' => 'Currency not found'
+            ]);
+    }
+
+    public function test_returns_404_for_negative_id()
+    {
+        $response = $this->getJson('/api/v1/currencies/-1');
+
+        $response->assertStatus(404)
+            ->assertJsonStructure([
+                'error'
+            ])
+            ->assertJson([
+                'error' => 'Currency not found'
+            ]);
+    }
+
+    public function test_returns_404_for_zero_id()
+    {
+        $response = $this->getJson('/api/v1/currencies/0');
+
+        $response->assertStatus(404)
+            ->assertJsonStructure([
+                'error'
+            ])
+            ->assertJson([
+                'error' => 'Currency not found'
+            ]);
+    }
+
+    public function test_returns_404_for_float_id()
+    {
+        $response = $this->getJson('/api/v1/currencies/1.5');
+
+        $response->assertStatus(404)
+            ->assertJsonStructure([
+                'error'
+            ])
+            ->assertJson([
+                'error' => 'Currency not found'
+            ]);
+    }
+
+    public function test_returns_404_for_alphanumeric_id()
+    {
+        $response = $this->getJson('/api/v1/currencies/abc123');
+
+        $response->assertStatus(404)
+            ->assertJsonStructure([
+                'error'
+            ])
+            ->assertJson([
+                'error' => 'Currency not found'
+            ]);
+    }
+
+    public function test_returns_404_for_special_characters_id()
+    {
+        $response = $this->getJson('/api/v1/currencies/@#$');
+
+        $response->assertStatus(404)
+            ->assertJsonStructure([
+                'error'
+            ])
+            ->assertJson([
+                'error' => 'Currency not found'
+            ]);
+    }
 }

@@ -93,8 +93,17 @@ class CurrencyController extends Controller
      */
     public function show($id)
     {
-        $currency = $this->repository->find($id);
-        
+        // Validate that the ID is a positive integer
+        if (!ctype_digit((string)$id) || (int)$id <= 0) {
+            return response()->json(['error' => 'Currency not found'], 404);
+        }
+
+        try {
+            $currency = $this->repository->find($id);
+        } catch (\TypeError $e) {
+            return response()->json(['error' => 'Currency not found'], 404);
+        }
+
         if (!$currency) {
             return response()->json(['error' => 'Currency not found'], 404);
         }

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Model\Currency;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Database\Seeders\CurrencySeeder;
@@ -37,8 +38,33 @@ class CurrencyApiGetTest extends TestCase
     {
         parent::setUp();
 
-        // Seed currencies using the CurrencySeeder
-        $this->seed(CurrencySeeder::class);
+        // Seed test currencies matching the CurrencySeeder
+        Currency::create([
+            'currency' => 'USD',
+            'description' => 'US Dollar',
+            'symbol' => '$',
+            'exchange_rate' => 1.0000,
+            'surcharge_rate' => 0.0500,
+            'discount_rate' => 0.0000,
+        ]);
+
+        Currency::create([
+            'currency' => 'EUR',
+            'description' => 'Euro',
+            'symbol' => '€',
+            'exchange_rate' => 0.8500,
+            'surcharge_rate' => 0.0500,
+            'discount_rate' => 0.0000,
+        ]);
+
+        Currency::create([
+            'currency' => 'GBP',
+            'description' => 'British Pound',
+            'symbol' => '£',
+            'exchange_rate' => 0.7500,
+            'surcharge_rate' => 0.0500,
+            'discount_rate' => 0.0000,
+        ]);
     }
 
     public function test_can_list_all_currencies()
@@ -116,5 +142,53 @@ class CurrencyApiGetTest extends TestCase
         $this->assertContains('USD', $currencyCodes);
         $this->assertContains('EUR', $currencyCodes);
         $this->assertContains('GBP', $currencyCodes);
+    }
+
+    public function test_can_get_currency_by_valid_id()
+    {
+        // Retrieve currency ID from seeded data dynamically
+        $currency = Currency::where('currency', 'USD')->first();
+
+        // Make API request to GET /api/v1/currencies/{id}
+        $response = $this->getJson("/api/v1/currencies/{$currency->id}");
+
+        // Verify 200 status code response
+        $response->assertStatus(200);
+
+        // Assert correct JSON structure with 'data' object (not array)
+        $response->assertJsonStructure([
+            'data' => [
+                'id',
+                'code',
+                'name',
+                'symbol',
+                'exchange_rate',
+                'surcharge_rate',
+                'discount_rate'
+            ]
+        ]);
+
+        // Validate all currency fields match expected seeded values
+        $response->assertJson([
+            'data' => [
+                'id' => $currency->id,
+                'code' => 'USD',
+                'name' => 'US Dollar',
+                'symbol' => '$',
+                'exchange_rate' => 1.0,
+                'surcharge_rate' => 0.05,
+                'discount_rate' => 0.0
+            ]
+        ]);
+
+        // Tests specific currency data accuracy - assert exact values
+        $responseData = $response->json('data');
+        $this->assertEquals($currency->id, $responseData['id']);
+        $this->assertEquals('USD', $responseData['code']);
+        $this->assertEquals('US Dollar', $responseData['name']);
+        $this->assertEquals('$', $responseData['symbol']);
+        $this->assertEquals(1.0, $responseData['exchange_rate']);
+        $this->assertEquals(0.05, $responseData['surcharge_rate']);
+        $this->assertEquals(0.0, $responseData['discount_rate']);
     }
 }

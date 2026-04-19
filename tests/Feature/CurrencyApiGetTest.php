@@ -41,5 +41,8 @@ class CurrencyApiGetTest extends TestCase
         $this->seed(CurrencySeeder::class);
     }
 
-    // Note: Test methods to be implemented as needed for specific API endpoints
+    /**
+     * Note: Test methods will be implemented as needed for specific API endpoints
+     * including GET /api/v1/currencies and GET /api/v1/currencies/{id}
+     */
 }

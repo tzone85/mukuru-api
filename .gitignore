@@ -16,3 +16,6 @@ CLAUDE.md
 .vxd-prompts/
 .serena/
 firebase-debug.log
+.phpunit.result.cache
+WAVE_CONTEXT.md
+vxd.yaml

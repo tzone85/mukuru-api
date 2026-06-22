@@ -161,9 +161,9 @@ class CurrencyController extends Controller
                 ]
             ]);
         } catch (\InvalidArgumentException $e) {
-            return response()->json(['error' => $e->getMessage()], 404);
+            return response()->json(['error' => 'Currency not found'], 404);
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], 422);
+            return response()->json(['errors' => $e->errors()], 422);
         }
     }
 
@@ -217,9 +217,9 @@ class CurrencyController extends Controller
                 ]
             ]);
         } catch (\InvalidArgumentException $e) {
-            return response()->json(['error' => $e->getMessage()], 404);
+            return response()->json(['error' => 'Currency not found'], 404);
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], 422);
+            return response()->json(['errors' => $e->errors()], 422);
         }
     }
 }

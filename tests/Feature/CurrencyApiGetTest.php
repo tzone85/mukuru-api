@@ -60,9 +60,9 @@ class CurrencyApiGetTest extends TestCase
                         'code',
                         'name',
                         'symbol',
-                        'exchange_rate',
-                        'surcharge_rate',
-                        'discount_rate'
+                        'rate',
+                        'surcharge_percentage',
+                        'discount_percentage'
                     ]
                 ]
             ]);
@@ -104,9 +104,9 @@ class CurrencyApiGetTest extends TestCase
                 'data' => [
                     'code' => 'ZAR',
                     'symbol' => 'R',
-                    'exchange_rate' => 0.0751574,
-                    'surcharge_rate' => 0.075,
-                    'discount_rate' => 0.03
+                    'rate' => 0.0751574,
+                    'surcharge_percentage' => 7.5,
+                    'discount_percentage' => 3.0
                 ]
             ]);
     }
@@ -122,9 +122,9 @@ class CurrencyApiGetTest extends TestCase
                 'data' => [
                     'code' => 'GBP',
                     'symbol' => '£',
-                    'exchange_rate' => 1.35,
-                    'surcharge_rate' => 0.05,
-                    'discount_rate' => 0.02
+                    'rate' => 1.35,
+                    'surcharge_percentage' => 5.0,
+                    'discount_percentage' => 2.0
                 ]
             ]);
     }
@@ -140,9 +140,9 @@ class CurrencyApiGetTest extends TestCase
                 'data' => [
                     'code' => 'EUR',
                     'symbol' => '€',
-                    'exchange_rate' => 1.18,
-                    'surcharge_rate' => 0.06,
-                    'discount_rate' => 0.025
+                    'rate' => 1.18,
+                    'surcharge_percentage' => 6.0,
+                    'discount_percentage' => 2.5
                 ]
             ]);
     }
@@ -158,9 +158,10 @@ class CurrencyApiGetTest extends TestCase
                 'data' => [
                     'code' => 'KES',
                     'symbol' => 'KSh',
-                    'exchange_rate' => 0.0088,
-                    'surcharge_rate' => 0.08,
-                    'discount_rate' => 0.035
+                    'rate' => 0.0088,
+                    // 8.0 round-trips through JSON as int 8
+                    'surcharge_percentage' => 8,
+                    'discount_percentage' => 3.5
                 ]
             ]);
     }
@@ -178,9 +179,9 @@ class CurrencyApiGetTest extends TestCase
                     'code',
                     'name',
                     'symbol',
-                    'exchange_rate',
-                    'surcharge_rate',
-                    'discount_rate'
+                    'rate',
+                    'surcharge_percentage',
+                    'discount_percentage'
                 ]
             ]);
     }
@@ -192,11 +193,11 @@ class CurrencyApiGetTest extends TestCase
         $response->assertStatus(404);
     }
 
-    public function test_get_currency_with_invalid_id_format_returns_500()
+    public function test_get_currency_with_invalid_id_format_returns_404()
     {
         $response = $this->getJson('/api/v1/currencies/invalid-id');
 
-        $response->assertStatus(500);
+        $response->assertStatus(404);
     }
 
     public function test_get_currency_with_negative_id_returns_404()
@@ -242,8 +243,9 @@ class CurrencyApiGetTest extends TestCase
         $currencies = $response->json('data');
 
         foreach ($currencies as $currency) {
-            $this->assertIsFloat($currency['exchange_rate']);
-            $this->assertGreaterThan(0, $currency['exchange_rate']);
+            // Whole-number values round-trip through JSON as int, so assert numeric.
+            $this->assertIsNumeric($currency['rate']);
+            $this->assertGreaterThan(0, $currency['rate']);
         }
     }
 
@@ -256,9 +258,9 @@ class CurrencyApiGetTest extends TestCase
         $currencies = $response->json('data');
 
         foreach ($currencies as $currency) {
-            $this->assertIsFloat($currency['surcharge_rate']);
-            $this->assertGreaterThanOrEqual(0, $currency['surcharge_rate']);
-            $this->assertLessThanOrEqual(1, $currency['surcharge_rate']);
+            $this->assertIsNumeric($currency['surcharge_percentage']);
+            $this->assertGreaterThanOrEqual(0, $currency['surcharge_percentage']);
+            $this->assertLessThanOrEqual(100, $currency['surcharge_percentage']);
         }
     }
 
@@ -271,9 +273,9 @@ class CurrencyApiGetTest extends TestCase
         $currencies = $response->json('data');
 
         foreach ($currencies as $currency) {
-            $this->assertIsFloat($currency['discount_rate']);
-            $this->assertGreaterThanOrEqual(0, $currency['discount_rate']);
-            $this->assertLessThanOrEqual(1, $currency['discount_rate']);
+            $this->assertIsNumeric($currency['discount_percentage']);
+            $this->assertGreaterThanOrEqual(0, $currency['discount_percentage']);
+            $this->assertLessThanOrEqual(100, $currency['discount_percentage']);
         }
     }
 }

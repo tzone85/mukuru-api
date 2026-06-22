@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Repository\OrderRepository;
-use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
@@ -31,12 +32,23 @@ class OrderController extends Controller
     }
 
     /**
-     * @param FormRequest $request
+     * Validation is enforced by the validate.request middleware (CreateOrderRequest).
+     * Only the three client-supplied fields are forwarded; all currency-derived
+     * amounts are computed server-side in the repository.
+     *
+     * @param Request $request
      * @return JsonResponse
      */
-    public function store(FormRequest $request)
+    public function store(Request $request)
     {
-        $order = $this->repository->create($request->all());
+        $attributes = $request->only(['currency', 'foreign_currency_amount', 'total_amount']);
+
+        try {
+            $order = $this->repository->create($attributes);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Currency not found'], 404);
+        }
+
         return response()->json($order, 200);
     }
 }

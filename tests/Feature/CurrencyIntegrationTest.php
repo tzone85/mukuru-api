@@ -305,9 +305,9 @@ class CurrencyIntegrationTest extends TestCase
                         'code',
                         'name',
                         'symbol',
-                        'exchange_rate',
-                        'surcharge_rate',
-                        'discount_rate'
+                        'rate',
+                        'surcharge_percentage',
+                        'discount_percentage'
                     ]
                 ]
             ])
